@@ -1,0 +1,56 @@
+{
+  "name": "@tjsr/express-server-helper",
+  "version": "0.0.1",
+  "description": "Express Server Helper",
+  "type": "module",
+  "main": "dist/esm/index.js",
+  "types": "dist/esm/index.d.ts",
+  "module": "dist/esm/index.js",
+  "exports": {
+    ".": {
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/index.js"
+    }
+  },
+  "scripts": {
+    "test": "test",
+    "clean": "npx rimraf dist build",
+    "clean:all": "npx rimraf dist build node_modules",
+    "build": "tsc",
+    "build:prod": "tsc && tsc -p tsconfig.cjs.json"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tjsr/express-server-helper.git"
+  },
+  "keywords": [
+    "Express"
+  ],
+  "author": "Tim Rowe <tim@tjsr.id.au>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tjsr/express-server-helper/issues"
+  },
+  "homepage": "https://github.com/tjsr/express-server-helper#readme",
+  "dependencies": {
+    "@tjsr/simple-env-utils": "^0.1.2",
+    "@tjsr/user-session-middleware": "^0.0.24",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "express-session": "^1.18.0",
+    "morgan": "^1.10.0",
+    "request-ip": "^3.3.0"
+  },
+  "devDependencies": {
+    "@types/cookie-parser": "^1.4.7",
+    "@types/cors": "^2.8.17",
+    "@types/express-session": "^1.18.0",
+    "@types/morgan": "^1.9.9",
+    "@types/request-ip": "^0.0.41",
+    "rimraf": "^5.0.7",
+    "tsx": "^4.16.0",
+    "typescript": "^5.5.3",
+    "vitest": "^1.6.0"
+  }
+}
