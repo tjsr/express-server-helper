@@ -56,5 +56,8 @@
     "tsx": "^4.16.2",
     "typescript": "^5.5.3",
     "vitest": "^1.6.0"
+  },
+  "overrides": {
+    "mysql2": ">=3.10.0"
   }
 }
