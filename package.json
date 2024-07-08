@@ -52,8 +52,8 @@
     "@types/morgan": "^1.9.9",
     "@types/request-ip": "^0.0.41",
     "eslint": "8.57",
-    "rimraf": "^5.0.7",
-    "tsx": "^4.16.0",
+    "rimraf": "^5.0.8",
+    "tsx": "^4.16.2",
     "typescript": "^5.5.3",
     "vitest": "^1.6.0"
   }
