@@ -1,5 +1,5 @@
 name: Build express-server-helper
-run-name: ${{ github.actor }} Running express-server-helper build.
+run-name: Running express-server-helper build.
 on: [push]
 jobs:
   build-express-server-helper:
