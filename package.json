@@ -15,7 +15,7 @@
   "scripts": {
     "test": "vitest --run && npm run lint",
     "build": "tsc",
-    "build:dist": "tsc && tsc -p tsconfig.cjs.json",
+    "build:dist": "npm run clean && tsc -p tsconfig.publish.json && tsc -p tsconfig.cjs.json",
     "clean": "npx rimraf dist build",
     "clean:all": "npx rimraf dist build node_modules",
     "lint": "eslint --config eslint.config.mjs src/*.ts",
