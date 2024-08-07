@@ -52,7 +52,7 @@ jobs:
 
       - name: Check latest version and create PR
         id: raise-version-pr
-        uses: tjsr/gh-util-actions/npm-dependency-pr@main
+        uses: tjsr/gh-util-actions/npm-dependency-pr@develop/fix-wanted-version
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           dependency: ${{ inputs.package }}
