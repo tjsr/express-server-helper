@@ -55,7 +55,7 @@
     "@types/request-ip": "^0.0.41",
     "eslint": "8.57",
     "rimraf": "^6.0.1",
-    "tsx": "^4.16.5",
+    "tsx": "^4.17.0",
     "typescript": "^5.5.4",
     "vitest": "^1.6.0"
   },
