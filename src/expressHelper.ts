@@ -49,7 +49,7 @@ export class ExpressServerHelper {
     }
   }
 
-  public addMiddleware(): ExpressServerHelper {
+  private addMiddleware(): ExpressServerHelper {
     this.loadPlugins(['morgan', 'cors', 'requestIp', 'trustProxy', 'exposeHeaders', 'cookieParser']);
 
     if (this._config.sessionOptions) {
