@@ -54,6 +54,8 @@ export class ExpressServerHelper {
 
     if (this._config.sessionOptions) {
       this.withUserSessionMiddleware();
+    } else {
+      console.warn('No session options provided. User session middleware not loaded.');
     }
 
     this.loadPlugins(['urlEncoded', 'json']);
