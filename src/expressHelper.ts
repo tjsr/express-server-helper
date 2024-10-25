@@ -188,7 +188,7 @@ export class ExpressServerHelper {
     }
 
     if (typeof middlewareCallbackAdd === 'function') {
-      this._middleware.push(middlewareCallbackAdd) - 1;
+      this._middleware.push(middlewareCallbackAdd);
       this._middlewareIds.push(id);
     } else {
       throw new Error('Add handler which is a function');
