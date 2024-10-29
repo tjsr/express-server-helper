@@ -23,8 +23,8 @@ export interface TestAppSessionData extends UserSessionData {}
 export interface TestAppSessionStoreDataType extends SessionStoreDataType {}
 
 export const startApp = (config: Partial<TestAppConfig>): express.Express => {
-  const useConfig = config?.sessionOptions?.name ? config :
-    {
+  const useConfig = config?.sessionOptions?.name ? config
+    : {
       ...config,
       sessionOptions: {
         ...config.sessionOptions,
