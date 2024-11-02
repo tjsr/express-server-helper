@@ -21,7 +21,8 @@
     "lint": "eslint --config eslint.config.mjs src/*.ts",
     "lint:fix": "eslint --fix src/*.ts",
     "prepack": "npm test && npm run build:dist",
-    "prepublishOnly": "npm run clean"
+    "prepublishOnly": "npm run clean",
+    "gh:check": "gh variable get NPM_VERSION && gh variable get NODE_VERSION"
   },
   "repository": {
     "type": "git",
