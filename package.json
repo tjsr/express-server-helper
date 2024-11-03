@@ -1,6 +1,6 @@
 {
   "name": "@tjsr/express-server-helper",
-  "version": "0.0.7",
+  "version": "0.0.8-0",
   "description": "Express Server Helper",
   "type": "module",
   "main": "dist/esm/index.js",
