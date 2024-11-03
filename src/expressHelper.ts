@@ -2,15 +2,14 @@ import { EXPRESS_DEFAULT_OPTIONS, Plugins as ExpressHelperPlugin, ExpressServerC
 import { UserSessionOptions, useUserSessionMiddleware } from '@tjsr/user-session-middleware';
 import cors, { CorsOptions } from 'cors';
 import express, { Handler, NextFunction } from 'express';
-import { isProductionMode, loadEnv } from '@tjsr/simple-env-utils';
 import requestIp, { Options } from 'request-ip';
 
 import cookieParser from 'cookie-parser';
+import { isProductionMode } from '@tjsr/simple-env-utils';
 import morgan from 'morgan';
 import session from 'express-session';
 
 const morganLog = morgan('common');
-loadEnv();
 type MiddlewareAddFunction = () => Handler | void;
 
 const toProperCase = (str: string) =>
