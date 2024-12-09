@@ -147,12 +147,16 @@ export class ExpressServerHelper {
 
   public withUserSessionMiddleware(sessionOptions?: Partial<UserSessionOptions>): ExpressServerHelper {
     const options: Partial<UserSessionOptions> = sessionOptions || this._config.sessionOptions;
-    this.wrapHandlerAdd(() => useUserSessionMiddleware(this._app, options), 'useUserSessionMiddleware');
+    this.wrapHandlerAdd(() => useUserSessionMiddleware(
+      this._app, options as UserSessionOptions), 'useUserSessionMiddleware'
+    );
     return this;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
   private getWithFunction(plugin: ExpressHelperPlugin): Function {
     const withFunctionName = `with${toProperCase(plugin)}`;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
     const configFunction: Function = this[withFunctionName as keyof this] as Function;
     if (configFunction === undefined) {
       throw new Error(`Function ${withFunctionName} does not exist to process plugin ${plugin}`);
