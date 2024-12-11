@@ -145,14 +145,20 @@ export class ExpressServerHelper {
     );
   }
 
-  public withUserSessionMiddleware(sessionOptions?: Partial<UserSessionOptions>): ExpressServerHelper {
-    const options: Partial<UserSessionOptions> = sessionOptions || this._config.sessionOptions;
+  public withUserSessionMiddleware(sessionOptions?: UserSessionOptions): ExpressServerHelper {
+    if (sessionOptions?.userIdNamespace === undefined) {
+      throw new Error('userIdNamespace is required for user session middleware.');
+    }
+    const options: UserSessionOptions =
+      sessionOptions || this._config.sessionOptions;
     this.wrapHandlerAdd(() => useUserSessionMiddleware(this._app, options), 'useUserSessionMiddleware');
     return this;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
   private getWithFunction(plugin: ExpressHelperPlugin): Function {
     const withFunctionName = `with${toProperCase(plugin)}`;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
     const configFunction: Function = this[withFunctionName as keyof this] as Function;
     if (configFunction === undefined) {
       throw new Error(`Function ${withFunctionName} does not exist to process plugin ${plugin}`);
@@ -169,6 +175,7 @@ export class ExpressServerHelper {
   private queuePluginToLoad(pluginName: ExpressHelperPlugin, config: ExpressServerConfig): ExpressServerHelper {
     const hasPlugin = config[pluginName];
     if (hasPlugin) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
       const configFunction: Function = this.getWithFunction(pluginName);
       if (typeof config[pluginName] === 'boolean') {
         const result = configFunction.call(this);
