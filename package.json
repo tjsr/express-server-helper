@@ -15,6 +15,7 @@
   "scripts": {
     "test": "vitest --run && npm run lint",
     "build": "tsc",
+    "build:dev": "npm link && nodemon",
     "build:dist": "npm run clean && tsc -p tsconfig.publish.json && tsc -p tsconfig.cjs.json",
     "clean": "npx rimraf dist build",
     "clean:all": "npx rimraf dist build node_modules",
@@ -53,7 +54,8 @@
     "@types/express-session": "^1.18.1",
     "@types/morgan": "^1.9.9",
     "@types/request-ip": "^0.0.41",
-    "eslint": "^9.13.0",
+    "eslint": "^9.16.0",
+    "nodemon": "^3.1.7",
     "rimraf": "^6.0.1",
     "tsx": "^4.19.2",
     "typescript": "^5.7.2",
@@ -61,5 +63,21 @@
   },
   "overrides": {
     "mysql2": ">=3.10.0"
+  },
+  "nodemon": {
+    "watch": [
+      "src",
+      "package.json",
+      "tsconfig.json",
+      "tsconfig.publish.json",
+      "tsconfig.cjs.json"
+    ],
+    "ext": "ts",
+    "ignore": [
+      "dist",
+      "build"
+    ],
+    "exec": "npm run build:dist",
+    "delay": 200
   }
 }
