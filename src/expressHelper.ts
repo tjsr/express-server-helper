@@ -52,7 +52,7 @@ export class ExpressServerHelper {
     this.loadPlugins(['morgan', 'cors', 'requestIp', 'trustProxy', 'exposeHeaders', 'cookieParser']);
 
     if (this._config.sessionOptions) {
-      this.withUserSessionMiddleware();
+      this.withUserSessionMiddleware(this._config.sessionOptions as UserSessionOptions);
     } else {
       console.warn('No session options provided. User session middleware not loaded.');
     }
@@ -146,11 +146,11 @@ export class ExpressServerHelper {
   }
 
   public withUserSessionMiddleware(sessionOptions?: UserSessionOptions): ExpressServerHelper {
-    if (sessionOptions?.userIdNamespace === undefined) {
+    const options: UserSessionOptions =
+      sessionOptions || this._config.sessionOptions as UserSessionOptions;
+    if (options?.userIdNamespace === undefined) {
       throw new Error('userIdNamespace is required for user session middleware.');
     }
-    const options: UserSessionOptions =
-      sessionOptions || this._config.sessionOptions;
     this.wrapHandlerAdd(() => useUserSessionMiddleware(this._app, options), 'useUserSessionMiddleware');
     return this;
   }
