@@ -145,11 +145,13 @@ export class ExpressServerHelper {
     );
   }
 
-  public withUserSessionMiddleware(sessionOptions?: Partial<UserSessionOptions>): ExpressServerHelper {
-    const options: Partial<UserSessionOptions> = sessionOptions || this._config.sessionOptions;
-    this.wrapHandlerAdd(() => useUserSessionMiddleware(
-      this._app, options as UserSessionOptions), 'useUserSessionMiddleware'
-    );
+  public withUserSessionMiddleware(sessionOptions?: UserSessionOptions): ExpressServerHelper {
+    if (sessionOptions?.userIdNamespace === undefined) {
+      throw new Error('userIdNamespace is required for user session middleware.');
+    }
+    const options: UserSessionOptions =
+      sessionOptions || this._config.sessionOptions;
+    this.wrapHandlerAdd(() => useUserSessionMiddleware(this._app, options), 'useUserSessionMiddleware');
     return this;
   }
 
@@ -173,6 +175,7 @@ export class ExpressServerHelper {
   private queuePluginToLoad(pluginName: ExpressHelperPlugin, config: ExpressServerConfig): ExpressServerHelper {
     const hasPlugin = config[pluginName];
     if (hasPlugin) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
       const configFunction: Function = this.getWithFunction(pluginName);
       if (typeof config[pluginName] === 'boolean') {
         const result = configFunction.call(this);
