@@ -51,7 +51,7 @@
     "@tjsr/eslint-config": "github:tjsr/eslint-config#main",
     "@types/cookie-parser": "^1.4.10",
     "@types/cors": "^2.8.19",
-    "@types/express-session": "^1.18.2",
+    "@types/express-session": "^1.19.0",
     "@types/morgan": "^1.9.10",
     "@types/request-ip": "^0.0.41",
     "eslint": "^10.4.1",
