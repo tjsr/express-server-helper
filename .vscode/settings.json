@@ -5,6 +5,19 @@
   "eslint.options": {
     "overrideConfigFile": "eslint.config.mjs"
   },
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": { "source.fixAll.eslint": "explicit" },
+  "eslint.validate": ["javascript", "javascriptreact", "typescript", "typescriptreact"],
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.tabSize": 2,
+    "editor.insertSpaces": true
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.tabSize": 2,
+    "editor.insertSpaces": true
+  },
   "[json]": {
     "editor.defaultFormatter": "vscode.json-language-features"
   },
@@ -19,5 +32,7 @@
     }
   ],
   "javascript.preferences.importModuleSpecifierEnding": "js",
-  "typescript.preferences.importModuleSpecifierEnding": "js"
+  "typescript.preferences.importModuleSpecifierEnding": "ts",
+  "prettier.requireConfig": true,
+  "prettier.configPath": ".prettierrc.json"
 }

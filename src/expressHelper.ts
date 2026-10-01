@@ -1,4 +1,4 @@
-import { EXPRESS_DEFAULT_OPTIONS, Plugins as ExpressHelperPlugin, ExpressServerConfig } from './types/expressConfig.js';
+import { EXPRESS_DEFAULT_OPTIONS, Plugins as ExpressHelperPlugin, ExpressServerConfig } from './types/expressConfig.ts';
 import { UserSessionOptions, useUserSessionMiddleware } from '@tjsr/user-session-middleware';
 import cors, { CorsOptions } from 'cors';
 import express, { Handler, NextFunction } from 'express';

@@ -1,2 +1,2 @@
-export { ExpressServerHelper } from './expressHelper.js';
-export type { ExpressServerConfig } from './types/expressConfig.js';
+export { ExpressServerHelper } from './expressHelper.ts';
+export type { ExpressServerConfig } from './types/expressConfig.ts';
