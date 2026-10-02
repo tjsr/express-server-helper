@@ -4,6 +4,8 @@
     "outDir": "./dist/cjs",
     "module": "commonjs",
     "moduleResolution": "Bundler",
+    "customConditions": ["import"],
+    "customConditions": ["import"],
     "target": "ESNext",
     "declaration": false /* Generate .d.ts files from TypeScript and JavaScript files in your project. */,
     "declarationMap": false /* Create sourcemaps for d.ts files. */
