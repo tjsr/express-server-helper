@@ -5,11 +5,18 @@ permissions:
   packages: read
 jobs:
   build:
+    name: Node ${{ matrix.node }} (${{ matrix.support }})
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        node: [24]
+        include:
+          - node: 22
+            support: diagnostic
+          - node: 24
+            support: supported
+          - node: 26
+            support: supported
     env:
       NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
