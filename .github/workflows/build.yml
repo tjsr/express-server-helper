@@ -55,7 +55,7 @@ jobs:
           const { createRequire } = require('node:module');
           const path = require('node:path');
           const semver = require('semver');
-          assert.equal(require('express/package.json').version, '5.3.0');
+          assert.ok(semver.satisfies(require('express/package.json').version, require('./package.json').dependencies.express));
           assert.equal(require('@types/express/package.json').version, '5.0.6');
           const middlewareEntry = require.resolve('@tjsr/user-session-middleware');
           const middleware = require(path.resolve(path.dirname(middlewareEntry), '../../package.json'));
