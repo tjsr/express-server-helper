@@ -31,12 +31,6 @@ jobs:
       - name: Use latest npm
         run: npm install --global npm@latest --registry=https://registry.npmjs.org
       - run: node --version && npm --version
-      - name: Inspect published Express middleware compatibility
-        if: matrix.node == 24
-        run: |
-          npm view @tjsr/user-session-middleware versions dist-tags peerDependencies --json
-          npm view '@tjsr/user-session-middleware@*' version peerDependencies --json
-          npm view @tjsr/mysql-pool-utils versions dist-tags exports --json
       - run: npm ci
       - run: npm test
       - run: npm run build
