@@ -1,7 +1,7 @@
 import tjsrEslintConfig from '@tjsr/eslint-config';
-import tseslint from 'typescript-eslint';
+import { defineConfig } from 'eslint/config';
 
-export default tseslint.config({
+export default defineConfig({
   extends: [
     ...tjsrEslintConfig,
   ],
