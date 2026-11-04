@@ -16,6 +16,7 @@ test('serves requests and validates unparsed login bodies through Express 5', as
   const helper = new ExpressServerHelper({
     morgan: false,
     sessionOptions: {
+      name: 'usm.sid',
       resave: false,
       saveUninitialized: false,
       secret: 'express-helper-test-only-secret',
