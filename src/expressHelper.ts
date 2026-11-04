@@ -1,4 +1,4 @@
-import { EXPRESS_DEFAULT_OPTIONS, Plugins as ExpressHelperPlugin, ExpressServerConfig } from './types/expressConfig.ts';
+import { isProductionMode } from '@tjsr/simple-env-utils';
 import { UserSessionOptions, useUserSessionMiddleware } from '@tjsr/user-session-middleware';
 import cookieParser from 'cookie-parser';
 import cors, { CorsOptions } from 'cors';
@@ -7,7 +7,7 @@ import session from 'express-session';
 import morgan from 'morgan';
 import requestIp, { Options } from 'request-ip';
 
-import { EXPRESS_DEFAULT_OPTIONS, Plugins as ExpressHelperPlugin, ExpressServerConfig } from './types/expressConfig.js';
+import { EXPRESS_DEFAULT_OPTIONS, Plugins as ExpressHelperPlugin, ExpressServerConfig } from './types/expressConfig.ts';
 
 const morganLog = morgan('common');
 type MiddlewareAddFunction = () => Handler | void;
