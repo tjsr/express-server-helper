@@ -46,7 +46,7 @@
   "homepage": "https://github.com/tjsr/express-server-helper#readme",
   "dependencies": {
     "@tjsr/simple-env-utils": "^0.1.11",
-    "@tjsr/user-session-middleware": "^0.2.0",
+    "@tjsr/user-session-middleware": "^0.2.1",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
     "express": "^5.3.0",

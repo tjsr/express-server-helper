@@ -31,6 +31,22 @@ jobs:
       - name: Use latest npm
         run: npm install --global npm@latest --registry=https://registry.npmjs.org
       - run: node --version && npm --version
+      - name: Regenerate strict dependency lock (temporary maintenance step)
+        run: |
+          npm install --package-lock-only --ignore-scripts --strict-peer-deps
+          node <<'NODE'
+          const assert = require('node:assert/strict');
+          const lock = require('./package-lock.json');
+          assert.equal(lock.packages['node_modules/@tjsr/user-session-middleware'].version, '0.2.1');
+          assert.equal(lock.packages['node_modules/@tjsr/mysql-pool-utils'].version, '0.2.2');
+          const reviewedHooks = new Set(['esbuild@0.28.2', 'fsevents@2.3.3']);
+          for (const [key, record] of Object.entries(lock.packages)) {
+            if (record.hasInstallScript) {
+              const name = key.split('node_modules/').pop();
+              assert.ok(reviewedHooks.has(`${name}@${record.version}`), 'Review new installation hooks before execution');
+            }
+          }
+          NODE
       - run: npm ci --strict-peer-deps
       - name: Verify the Express 5 dependency chain
         run: |
@@ -44,7 +60,7 @@ jobs:
           const middlewareEntry = require.resolve('@tjsr/user-session-middleware');
           const middleware = require(path.resolve(path.dirname(middlewareEntry), '../../package.json'));
           const middlewareRequire = createRequire(middlewareEntry);
-          assert.equal(middleware.version, '0.2.0');
+          assert.equal(middleware.version, '0.2.1');
           assert.ok(semver.satisfies(middlewareRequire('express/package.json').version, middleware.peerDependencies.express));
           const mysqlEntry = middlewareRequire.resolve('@tjsr/mysql-pool-utils');
           const mysql = require(path.resolve(path.dirname(mysqlEntry), '../../package.json'));
@@ -58,3 +74,52 @@ jobs:
         run: |
           npm run prepublishOnly --if-present
           npm pack --dry-run
+
+  regenerate-dependency-lock:
+    name: Commit generated lock (temporary maintenance job)
+    if: github.ref == 'refs/heads/dependabot/npm_and_yarn/express-5.3.0'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: read
+    env:
+      NODE_AUTH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24.21.0'
+          registry-url: https://npm.pkg.github.com
+          scope: '@tjsr'
+      - name: Use reviewed npm version
+        run: npm install --global npm@12.2.1 --registry=https://registry.npmjs.org
+      - name: Generate strict dependency lock without lifecycle scripts
+        run: |
+          npm install --package-lock-only --ignore-scripts --strict-peer-deps
+          node <<'NODE'
+          const assert = require('node:assert/strict');
+          const lock = require('./package-lock.json');
+          assert.equal(process.env.GITHUB_REPOSITORY, 'tjsr/express-server-helper');
+          assert.equal(process.env.GITHUB_REF, 'refs/heads/dependabot/npm_and_yarn/express-5.3.0');
+          assert.equal(lock.packages['node_modules/@tjsr/user-session-middleware'].version, '0.2.1');
+          assert.equal(lock.packages['node_modules/@tjsr/mysql-pool-utils'].version, '0.2.2');
+          for (const record of Object.values(lock.packages)) {
+            if (record.resolved && record.resolved.startsWith('https://')) {
+              const url = new URL(record.resolved);
+              assert.ok(!url.username && !url.password);
+            }
+          }
+          NODE
+      - name: Commit only generated lock to existing PR branch
+        run: |
+          git diff --exit-code -- package.json
+          git add -- package-lock.json
+          if git diff --cached --quiet; then
+            echo 'The committed dependency lock is already current.'
+            exit 0
+          fi
+          test "$(git diff --cached --name-only)" = 'package-lock.json'
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'Regenerate strict lock for Express 5 and middleware 0.2.1'
+          git push origin HEAD:refs/heads/dependabot/npm_and_yarn/express-5.3.0
