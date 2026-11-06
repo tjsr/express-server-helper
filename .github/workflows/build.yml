@@ -43,7 +43,13 @@ jobs:
           const root = require('./package.json');
 
           function installedPackage(name, resolver = require) {
-            const entry = resolver.resolve(name);
+            let entry;
+            try {
+              entry = resolver.resolve(name);
+            } catch (error) {
+              if (error.code !== 'MODULE_NOT_FOUND') throw error;
+              entry = resolver.resolve(`${name}/package.json`);
+            }
             for (let directory = path.dirname(entry); directory !== path.dirname(directory); directory = path.dirname(directory)) {
               const manifestPath = path.join(directory, 'package.json');
               if (fs.existsSync(manifestPath)) {
