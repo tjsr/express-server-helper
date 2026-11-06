@@ -33,7 +33,7 @@ jobs:
       - run: node --version && npm --version
       - name: Regenerate strict dependency lock (temporary maintenance step)
         run: |
-          npm install --package-lock-only --ignore-scripts --strict-peer-deps
+          npm install --ignore-scripts --strict-peer-deps --allow-remote=none
           node <<'NODE'
           const assert = require('node:assert/strict');
           const lock = require('./package-lock.json');
@@ -95,7 +95,7 @@ jobs:
         run: npm install --global npm@12.2.1 --registry=https://registry.npmjs.org
       - name: Generate strict dependency lock without lifecycle scripts
         run: |
-          npm install --package-lock-only --ignore-scripts --strict-peer-deps
+          npm install --ignore-scripts --strict-peer-deps --allow-remote=none
           node <<'NODE'
           const assert = require('node:assert/strict');
           const lock = require('./package-lock.json');
