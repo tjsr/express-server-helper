@@ -32,24 +32,45 @@ jobs:
         run: npm install --global npm@latest --registry=https://registry.npmjs.org
       - run: node --version && npm --version
       - run: npm ci --strict-peer-deps
-      - name: Verify the Express 5 dependency chain
+      - name: Verify declared dependency compatibility
         run: |
           node <<'NODE'
           const assert = require('node:assert/strict');
           const { createRequire } = require('node:module');
+          const fs = require('node:fs');
           const path = require('node:path');
           const semver = require('semver');
-          assert.ok(semver.satisfies(require('express/package.json').version, require('./package.json').dependencies.express));
-          assert.equal(require('@types/express/package.json').version, '5.0.6');
-          const middlewareEntry = require.resolve('@tjsr/user-session-middleware');
-          const middleware = require(path.resolve(path.dirname(middlewareEntry), '../../package.json'));
-          const middlewareRequire = createRequire(middlewareEntry);
-          assert.equal(middleware.version, '0.2.2');
-          assert.ok(semver.satisfies(middlewareRequire('express/package.json').version, middleware.peerDependencies.express));
-          const mysqlEntry = middlewareRequire.resolve('@tjsr/mysql-pool-utils');
-          const mysql = require(path.resolve(path.dirname(mysqlEntry), '../../package.json'));
-          assert.equal(mysql.version, '0.2.2');
-          assert.ok(semver.satisfies(createRequire(mysqlEntry)('mysql2/package.json').version, mysql.dependencies.mysql2));
+          const root = require('./package.json');
+
+          function installedPackage(name, resolver = require) {
+            const entry = resolver.resolve(name);
+            for (let directory = path.dirname(entry); directory !== path.dirname(directory); directory = path.dirname(directory)) {
+              const manifestPath = path.join(directory, 'package.json');
+              if (fs.existsSync(manifestPath)) {
+                const manifest = require(manifestPath);
+                if (manifest.name === name) return { manifest, resolver: createRequire(entry) };
+              }
+            }
+            throw new Error(`Could not find the manifest for ${name}`);
+          }
+
+          function assertDeclaredRange(name, installed, declaring, field) {
+            const range = declaring[field]?.[name];
+            assert.ok(range, `${declaring.name} must declare ${name} in ${field}`);
+            assert.ok(semver.satisfies(installed.manifest.version, range),
+              `${name}@${installed.manifest.version} must satisfy ${declaring.name}'s ${field} range ${range}`);
+          }
+
+          const express = installedPackage('express');
+          const expressTypes = installedPackage('@types/express');
+          const middleware = installedPackage('@tjsr/user-session-middleware');
+          assertDeclaredRange('express', express, root, 'dependencies');
+          assertDeclaredRange('@types/express', expressTypes, root, 'dependencies');
+          assertDeclaredRange('@tjsr/user-session-middleware', middleware, root, 'dependencies');
+          assertDeclaredRange('express', installedPackage('express', middleware.resolver), middleware.manifest, 'peerDependencies');
+          const mysql = installedPackage('@tjsr/mysql-pool-utils', middleware.resolver);
+          assertDeclaredRange('@tjsr/mysql-pool-utils', mysql, middleware.manifest, 'dependencies');
+          assertDeclaredRange('mysql2', installedPackage('mysql2', mysql.resolver), mysql.manifest, 'dependencies');
           NODE
       - run: npm test
       - run: npm run build
