@@ -31,7 +31,53 @@ jobs:
       - name: Use latest npm
         run: npm install --global npm@latest --registry=https://registry.npmjs.org
       - run: node --version && npm --version
-      - run: npm ci
+      - run: npm ci --strict-peer-deps
+      - name: Verify declared dependency compatibility
+        run: |
+          node <<'NODE'
+          const assert = require('node:assert/strict');
+          const { createRequire } = require('node:module');
+          const fs = require('node:fs');
+          const path = require('node:path');
+          const semver = require('semver');
+          const root = require('./package.json');
+
+          function installedPackage(name, resolver = require) {
+            let entry;
+            try {
+              entry = resolver.resolve(name);
+            } catch (error) {
+              if (error.code !== 'MODULE_NOT_FOUND') throw error;
+              entry = resolver.resolve(`${name}/package.json`);
+            }
+            for (let directory = path.dirname(entry); directory !== path.dirname(directory); directory = path.dirname(directory)) {
+              const manifestPath = path.join(directory, 'package.json');
+              if (fs.existsSync(manifestPath)) {
+                const manifest = require(manifestPath);
+                if (manifest.name === name) return { manifest, resolver: createRequire(entry) };
+              }
+            }
+            throw new Error(`Could not find the manifest for ${name}`);
+          }
+
+          function assertDeclaredRange(name, installed, declaring, field) {
+            const range = declaring[field]?.[name];
+            assert.ok(range, `${declaring.name} must declare ${name} in ${field}`);
+            assert.ok(semver.satisfies(installed.manifest.version, range),
+              `${name}@${installed.manifest.version} must satisfy ${declaring.name}'s ${field} range ${range}`);
+          }
+
+          const express = installedPackage('express');
+          const expressTypes = installedPackage('@types/express');
+          const middleware = installedPackage('@tjsr/user-session-middleware');
+          assertDeclaredRange('express', express, root, 'dependencies');
+          assertDeclaredRange('@types/express', expressTypes, root, 'dependencies');
+          assertDeclaredRange('@tjsr/user-session-middleware', middleware, root, 'dependencies');
+          assertDeclaredRange('express', installedPackage('express', middleware.resolver), middleware.manifest, 'peerDependencies');
+          const mysql = installedPackage('@tjsr/mysql-pool-utils', middleware.resolver);
+          assertDeclaredRange('@tjsr/mysql-pool-utils', mysql, middleware.manifest, 'dependencies');
+          assertDeclaredRange('mysql2', installedPackage('mysql2', mysql.resolver), mysql.manifest, 'dependencies');
+          NODE
       - run: npm test
       - run: npm run build
       - name: Validate package

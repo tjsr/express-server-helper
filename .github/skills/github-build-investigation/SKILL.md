@@ -25,6 +25,7 @@ description: 'Use when investigating failed GitHub Actions builds, CI logs, push
 6. For dependency failures, compare the package manifest, lockfile-resolved version (`npm ls <package> --depth=0`), published version (`npm view <package> version`), package `exports`/`types`, and files actually included by `npm pack --dry-run`. Do not treat a workspace checkout or local `dist` output as proof that the same version is published.
 7. Fix the owning package, build/test and inspect its packed files, then confirm the consumer's semver range includes the fix. Refresh the consumer lockfile only after the fixed version is published and available to CI. Preserve private registry configuration and existing CI cache/setup steps.
 8. Re-run the failing command locally, then the relevant project test/build scripts. Use `npm pack --dry-run` for non-release packaging checks; `npm publish --dry-run` can still reject an already-published version. If only a private credential or remote service blocks verification, report the exact blocker without exposing secrets.
+9. Treat `package.json` and `package-lock.json` as the only dependency-version authority. Do not pin library versions in CI assertions; a compatibility check must read the declaring package's dependency or peer range at runtime.
 
 ## Safety
 

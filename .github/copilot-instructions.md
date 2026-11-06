@@ -36,3 +36,20 @@ the shared document cannot be fetched and qualify any install/test recipes below
   Dependabot PR, prefer squash; a single-commit PR may use rebase.
 
 [tjsr-npm-policy]: https://github.com/tjsr/tjsr/blob/251fd1d0606a6ce7e0c994190bbe8f318028fb9e/agent-policies/npm-ci-verification.md
+
+## Dependency version authority and releases
+
+- `package.json` and `package-lock.json` are the only authority for dependency
+  versions. Do not encode a desired, exact, or minimum library version in a
+  GitHub Actions workflow, test, or agent recipe.
+- CI may verify that an installed package satisfies the range declared by its
+  owning manifest, including a dependency's peer range, but it must read that
+  range from the manifest instead of repeating a version literal.
+- Keep public dependencies on an actively supported range in `package.json`.
+  If an upgrade needs a dependent library to support a newer peer (such as
+  Express), fix and publish that owning library first, verify its published
+  contents and declared range, then update this consumer to the published
+  version and regenerate its real lockfile. Never force an incompatible tree.
+- Agents may automate authorized dependency-update PRs and, when an authorized
+  release request explicitly includes publishing, use the configured version and
+  publish workflow. This does not grant standing authority to publish or release.
